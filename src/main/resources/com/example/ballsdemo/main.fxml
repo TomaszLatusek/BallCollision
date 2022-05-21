@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.shape.Circle?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.ballsdemo.Controller"
+            prefHeight="400.0" prefWidth="600.0"
+            fx:id="scene">
+    <children>
+        <Circle fx:id="ball" radius="50.0" layoutX="280.0" layoutY="200.0" stroke="BLACK" strokeType="INSIDE"  />
+    </children>
+</AnchorPane>
