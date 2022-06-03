@@ -4,7 +4,8 @@ import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+
+import java.util.Random;
 
 public class Ball {
 
@@ -12,11 +13,14 @@ public class Ball {
     public double r;
     public Circle display;
     public Bounds bounds;
+    private boolean noLoss;
 
-    public Ball(double x, double y, double r, Pane canvas) {
+    public Ball(double x, double y, double r, Pane canvas, boolean noLoss) {
+        Random rand = new Random();
+
         this.r = r;
         pos = new Vector(x, y);
-        vel = new Vector((3 + Math.random() * 3), (3 + Math.random() * 3));
+        vel = new Vector(rand.nextDouble(1 - (-1) + (-1)), rand.nextDouble(1 - (-1) + (-1)));
 
         display = new Circle();
         display.relocate(x, y);
@@ -25,10 +29,13 @@ public class Ball {
         display.setFill(color);
 
         this.bounds = canvas.getBoundsInLocal();
+        this.noLoss = noLoss;
     }
 
     public void move() {
-        vel.y += 0.1;
+        if (!noLoss) {
+            vel.y += 0.1;
+        }
         pos.add(vel);
         if (pos.x < r) {
             pos.x = r;
@@ -44,8 +51,7 @@ public class Ball {
         }
         if (pos.y > bounds.getMaxY() - r) {
             pos.y = bounds.getMaxY() - r;
-            vel.y = -vel.y;
-            vel.y += 0.3;
+            vel.y = noLoss ? -vel.y : -vel.y * 0.9;
         }
     }
 
@@ -64,13 +70,13 @@ public class Ball {
             Vector thisToOtherNormal = relative.clone().getNormalized();
             double approachSpeed = vel.dot(thisToOtherNormal) + -other.vel.dot(thisToOtherNormal);
             Vector approachVector = thisToOtherNormal.clone();
-            approachVector.setMag(approachSpeed);
+            approachVector.setMag(noLoss ? approachSpeed : approachSpeed * 0.99);
             vel.subtract(approachVector);
             other.vel.add(approachVector);
         }
     }
 
-    public void render() {
+    public void render() throws InterruptedException {
         display.setLayoutX(pos.x);
         display.setLayoutY(pos.y);
     }
