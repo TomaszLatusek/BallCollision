@@ -76,7 +76,7 @@ public class Ball {
         }
     }
 
-    public void render() throws InterruptedException {
+    public void render() {
         display.setLayoutX(pos.x);
         display.setLayoutY(pos.y);
     }

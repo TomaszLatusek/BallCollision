@@ -3,10 +3,13 @@ package com.example.ballsdemo;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
@@ -14,12 +17,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Main extends Application {
-    final int NUMBER_OF_BALLS = 90;
+    final int NUMBER_OF_BALLS = 600;
     final int NUMBER_OF_THREADS = 3;
-    final boolean NO_LOSS = false;
+    final boolean NO_LOSS = true;
 
     private Pane canvas;
-    private Object lock;
     ArrayList<Ball> balls = new ArrayList<>();
     ArrayList<Thread> threads = new ArrayList<>();
 
@@ -27,13 +29,20 @@ public class Main extends Application {
     public void start(final Stage primaryStage) throws FileNotFoundException {
 
         canvas = new Pane();
-        lock = new Object();
         final Scene scene = new Scene(canvas, 800, 600);
         scene.setFill(Color.BLACK);
 
         primaryStage.setTitle("Balls");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
 
         generateBalls();
 
@@ -59,13 +68,10 @@ public class Main extends Application {
         final Timeline loop = new Timeline(new KeyFrame(Duration.millis(10), t -> {
             for (Ball ball : balls) {
                 ball.move();
-                try {
-                    ball.render();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                ball.render();
             }
-        }));
+        }
+        ));
 
         primaryStage.show();
 
